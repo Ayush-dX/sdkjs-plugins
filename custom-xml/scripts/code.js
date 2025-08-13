@@ -37,48 +37,149 @@
 
 	let codeEditor	= null;
 	let xmlData		= [];
+	let lastSelectedXmlId = null;
+
+	async function getXmls() {
+		Asc.scope.editorType = window.Asc.plugin.info.editorType;
+		xmlData = await Editor.callCommand(() => {
+			let doc;
+			switch(Asc.scope.editorType) {
+				case 'word':
+					doc = Api.GetDocument();
+					break;
+				case 'slide':
+					doc = Api.GetPresentation();
+					break;
+				case 'cell':
+					doc = Api.GetActiveSheet();
+					break;
+			}
+			let xmlManager = doc.GetCustomXmlParts();
+			let xmls = xmlManager.GetAll();
+			return xmls.map(xml => ({text: xml.GetXml(), id: xml.GetId()}));
+		});
+
+		if (xmlData && xmlData.length)
+			createListOfXmls(xmlData);
+	}
+
+	async function createXml()
+	{
+		Asc.scope.editorType = window.Asc.plugin.info.editorType;
+		let id = await Editor.callCommand(() => {
+			let doc;
+			switch(Asc.scope.editorType) {
+				case 'word':
+					doc = Api.GetDocument();
+					break;
+				case 'slide':
+					doc = Api.GetPresentation();
+					break;
+				case 'cell':
+					doc = Api.GetActiveSheet();
+					break;
+			}
+			let xmlManager = doc.GetCustomXmlParts();
+			let xmlDefaultText = `<?xml version="1.0" encoding="UTF-8"?><defalut>text</defalut>`;
+			let xml = xmlManager.Add(xmlDefaultText);
+			return xml.GetId();
+		});
+
+		let listWrapper		= document.getElementById("xmlList");
+		let option			= document.createElement("option");
+		option.innerHTML	= id;
+
+		listWrapper.appendChild(option);
+		document.getElementById('xmlList').value = id;
+		loadXmlTextAndStructure();
+	}
 
 	function getCurrentXmlId()
 	{
 		let select			= document.getElementById("xmlList");
 		let index			= select.selectedIndex;
-		
 		if (index === -1)
 			return "";
 
 		let selectedItem	= select.options[index];
-
 		return selectedItem.innerText
+	}
+
+	async function deleteXml()
+	{
+		let id = getCurrentXmlId();
+		if (!id)
+			return;
+
+		Asc.scope.id = id;
+		Asc.scope.editorType = window.Asc.plugin.info.editorType;
+
+		await Editor.callCommand(() => {
+			let doc;
+			switch(Asc.scope.editorType) {
+				case 'word':
+					doc = Api.GetDocument();
+					break;
+				case 'slide':
+					doc = Api.GetPresentation();
+					break;
+				case 'cell':
+					doc = Api.GetActiveSheet();
+					break;
+			}
+			let xmlManager = doc.GetCustomXmlParts();
+			let xml		   = xmlManager.GetById(Asc.scope.id);
+			xml.Delete();
+		});
+
+		let select = document.getElementById('xmlList');
+		let selectedIndex = select.selectedIndex;
+		if (selectedIndex !== -1) {
+			select.remove(selectedIndex);
+		}
 	}
 
 	async function updateXmlText(id, str)
 	{
-		Asc.scope.id = id;
-		Asc.scope.str = str;
-		await Editor.callCommand(() => {
+		Asc.scope.id			= id;
+		Asc.scope.str			= str;
+		Asc.scope.editorType	= window.Asc.plugin.info.editorType;
 
+		await Editor.callCommand(() => {
 			function getFirstTagName(xmlText) {
-				const parser = new DOMParser();
-				const xmlDoc = parser.parseFromString(xmlText, "application/xml");
-				const parseError = xmlDoc.getElementsByTagName("parsererror");
-		
-				if (parseError.length > 0) {
-				  return false;
-				}
-			  
+				const parser		= new DOMParser();
+				const xmlDoc		= parser.parseFromString(xmlText, "application/xml");
+				const parseError	= xmlDoc.getElementsByTagName("parsererror");
+
+				if (parseError.length > 0)
+					return false;
+
 				return xmlDoc.documentElement.nodeName;
 			}
 
-			let Doc			= Api.GetDocument();
-			let XmlManager	= Doc.GetCustomXmlParts();
-			let xml			= XmlManager.GetById(Asc.scope.id);
+			let doc;
+			switch(Asc.scope.editorType) {
+				case 'word':
+					doc = Api.GetDocument();
+					break;
+				case 'slide':
+					doc = Api.GetPresentation();
+					break;
+				case 'cell':
+					doc = Api.GetActiveSheet();
+					break;
+			}
+			let xmlManager	= doc.GetCustomXmlParts();
+			let xml			= xmlManager.GetById(Asc.scope.id);
+			if (!xml)
+				return;
 			let xmlText		= xml.GetXml();
 
 			let rootNodeName= getFirstTagName(xmlText);
 			let rootNodes	= xml.GetNodes('/' + rootNodeName);
 			if (rootNodes.length)
 			{
-				let rootNode	= rootNodes[0];
+				let rootNode = rootNodes[0];
 				rootNode.SetXml(Asc.scope.str);
 			}
 		});
@@ -89,49 +190,28 @@
 	async function getTextOfXml(id)
 	{
 		Asc.scope.id = id;
-
+		Asc.scope.editorType = window.Asc.plugin.info.editorType;
 		return await Editor.callCommand(() => {
-			let Doc			= Api.GetDocument();
-			let XmlManager	= Doc.GetCustomXmlParts();
-			let xml			= XmlManager.GetById(Asc.scope.id);
-
+			let doc;
+			switch(Asc.scope.editorType) {
+				case 'word':
+					doc = Api.GetDocument();
+					break;
+				case 'slide':
+					doc = Api.GetPresentation();
+					break;
+				case 'cell':
+					doc = Api.GetActiveSheet();
+					break;
+			}
+			let xmlManager	= doc.GetCustomXmlParts();
+			let xml			= xmlManager.GetById(Asc.scope.id);
 			return xml.GetXml();
-		});	
-	}
-
-	async function deleteXml(){
-		let id = getCurrentXmlId();
-		if (!id)
-			return;
-
-		Asc.scope.id = id;
-		await Editor.callCommand(() => {
-			let Doc			= Api.GetDocument();
-			let XmlManager	= Doc.GetCustomXmlParts();
-			let xml			= XmlManager.GetById(Asc.scope.id);
-			xml.Delete();
 		});
-
-		document.getElementById('xmlList').value = '';
 	}
 
-	async function getXmls() {
-		xmlData = await Editor.callCommand(() => {
-			let Doc			= Api.GetDocument();
-			let XmlManager	= Doc.GetCustomXmlParts();
-			let xmls		= XmlManager.GetAll();
-
-			let result		= [];
-			xmls.forEach(xml => result.push({text: xml.GetXml(), id : xml.GetId()}));
-			return result;
-		});
-
-		if (xmlData && xmlData.length)
-			createListOfXmls(xmlData);
-	}
-	
 	function createListOfXmls(xmlData)
-	{	
+	{
 		let listWrapper			= document.getElementById("xmlList");
 		listWrapper.innerHTML	= '';
 
@@ -147,12 +227,13 @@
 
 	async function loadXmlTextAndStructure()
 	{
-		let id				= getCurrentXmlId();
-		if (!id)
+		let id = getCurrentXmlId();
+		if (!id || id === lastSelectedXmlId)
 			return;
 
-		let xmlText			= await getTextOfXml(id);
-		let prettyXmlText	= prettifyXml(xmlText);
+		lastSelectedXmlId = id;
+		let xmlText = await getTextOfXml(id);
+		let prettyXmlText = prettifyXml(xmlText);
 
 		codeEditor.setValue(prettyXmlText);
 		await createStrucOfXml(id);
@@ -164,6 +245,7 @@
 		oStructure.innerHTML = '';
 
 		Asc.scope.id = id;
+		Asc.scope.editorType = window.Asc.plugin.info.editorType;
 		let data = await Editor.callCommand(function() {
 			function GenerateDataFromNode (node, data)
 			{
@@ -210,9 +292,20 @@
 				return xmlDoc.documentElement.nodeName;
 			}
 
-			let Doc			= Api.GetDocument();
-			let XmlManager	= Doc.GetCustomXmlParts();
-			let xml			= XmlManager.GetById(Asc.scope.id);
+			let doc;
+			switch(Asc.scope.editorType) {
+				case 'word':
+					doc = Api.GetDocument();
+					break;
+				case 'slide':
+					doc = Api.GetPresentation();
+					break;
+				case 'cell':
+					doc = Api.GetActiveSheet();
+					break;
+			}
+			let xmlManager	= doc.GetCustomXmlParts();
+			let xml			= xmlManager.GetById(Asc.scope.id);
 			let xmlText		= xml.GetXml();
 			let rootNodeName= GetFirstTagName(xmlText);
 			let rootNodes	= xml.GetNodes('/' + rootNodeName);
@@ -375,15 +468,29 @@
 
 	async function updateAllContentControlsFromBinding()
 	{
-		Asc.scope.controls = await Editor.callMethod('GetAllContentControls');
-		
+		Asc.scope.controls		= await Editor.callMethod('GetAllContentControls');
+		Asc.scope.editorType	= window.Asc.plugin.info.editorType;
 		await Editor.callCommand(() => {
-			let Doc			= Api.GetDocument();
+			let doc;
+			switch(Asc.scope.editorType) {
+				case 'word':
+					doc = Api.GetDocument();
+					break;
+				case 'slide':
+					doc = Api.GetPresentation();
+					break;
+				case 'cell':
+					doc = Api.GetActiveSheet();
+					break;
+			}
+
+			if (!Asc.scope.controls)
+				Asc.scope.controls = [];
 
 			for (let i = 0; i < Asc.scope.controls.length; i++)
 			{
-				let ccId	= Asc.scope.controls[i];
-				let cc		= Doc.GetContentControlById(ccId.InternalId);
+				let ccId = Asc.scope.controls[i];
+				let cc = doc.GetContentControlById(ccId.InternalId);
 				if (cc)
 					cc.UpdateFromXmlMapping();
 			}
@@ -392,6 +499,13 @@
 
     window.Asc.plugin.init = async function()
     {
+		// Hide content control elements for non-Word editors
+		if (window.Asc.plugin.info.editorType !== 'word') {
+			document.getElementById("structureLabel").style.display = 'none';
+			document.getElementById("structureDiv").style.display = 'none';
+			document.getElementById("contentControlsDiv").style.display = 'none';
+		}
+
 		if (!codeEditor) {
 			codeEditor = CodeMirror(document.getElementById("main"), {
 				mode: "text/xml",
@@ -410,7 +524,7 @@
 			});
 		}
 
-		document.getElementById("xmlList").addEventListener("change", loadXmlTextAndStructure);
+		document.getElementById("xmlList").addEventListener("input", loadXmlTextAndStructure);
 
 		getXmls();
 		
@@ -426,24 +540,8 @@
 			await createStrucOfXml(id);
 		};
 
-		document.getElementById("createContentOfXml").onclick = async function(e) {
-			let id = await Editor.callCommand(() => {
-				let Doc				= Api.GetDocument();
-				let XmlManager		= Doc.GetCustomXmlParts();
-				let xmlDefaultText	= `<?xml version="1.0" encoding="UTF-8"?><defalut>text</defalut>`;
-				let xml = XmlManager.Add(xmlDefaultText);
-				return xml.GetId();
-			});
+		document.getElementById("createContentOfXml").onclick = createXml;
 
-			let listWrapper		= document.getElementById("xmlList");
-			let option			= document.createElement("option");
-			option.innerHTML	= id;
-
-			listWrapper.appendChild(option);
-			document.getElementById('xmlList').value = id;
-			loadXmlTextAndStructure();
-		};
-		
 		document.getElementById("deleteContentOfXml").onclick = async function(e) {
 			await deleteXml();
 			codeEditor.setValue("");
@@ -452,9 +550,8 @@
 		};
 
 		document.getElementById("match_with_selected_сс").onclick = async function(e) {
-			let ccId	= await Editor.callMethod("GetCurrentContentControl");
 			let xmlId	= document.getElementById('xmlList').value;
-			
+
 			if (ccId !== null)
 			{
 				Asc.scope.xmlId	= xmlId;
@@ -463,14 +560,14 @@
 
 				await Editor.callCommand(() => {
 					let Doc			= Api.GetDocument();
-					let cc			= Doc.GetContentControlById(Asc.scope.id);
+					let cc			= Doc.GetCurrentContentControl();
 					cc.SetDataBinding({prefixMapping: "", storeItemID: Asc.scope.xmlId, xpath: Asc.scope.xPath});
 				});
 			}
 		}
 
 		document.getElementById("insert_cc").onclick = async function(e) {
-			
+
 			let select			= document.getElementById("ccType");
 			let index			= select.selectedIndex;
 			let selectedItem	= select.options[index];

@@ -107,13 +107,13 @@
 		<label class="header" style="margin-top: 5px;">Content of xml</label>
 		<div id="main" class="div_main" style="height:50%; margin-top: 5px; margin-bottom: 5px;"></div>
 
-		<label class="header" style="margin-top: 5px; margin-bottom: 5px;">Structure of selected XML <button class="btn-text-default" id="match_with_selected_сс" style="width: auto;">Bind to selected control</button></label>
+		<label class="header" id="structureLabel" style="margin-top: 5px; margin-bottom: 5px;">Structure of selected XML <button class="btn-text-default" id="match_with_selected_сс" style="width: auto;">Bind to selected control</button></label>
 		
-		<div class="div_main" style="overflow:auto;">
+		<div id="structureDiv" class="div_main" style="overflow:auto;">
 			<ul id="structureOfXML" style="user-select:none"></ul>
 		</div>
 		
-		<div style="margin: 15px;">
+		<div id="contentControlsDiv" style="margin: 15px;">
 			<select id="ccType" class="form-control select2-dropdown">
 				<option value="block" selected>Formatted Text</option>
 				<option value="inline">Plain Text</option>
