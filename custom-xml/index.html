@@ -96,13 +96,14 @@
 		<script type="text/javascript" src="scripts/code.js"></script>
     </head>
     <body>
+		<button class="btn-text-default" id="reloadContentOfXml">Get all xml's from document</button>
+		<button class="btn-text-default" id="createContentOfXml">Add new xml</button>
+		
+		<button class="btn-text-default" id="updateContentOfXml">Save current xml</button>
+		<button class="btn-text-default" id="deleteContentOfXml">Delete current xml</button>
+
 		<label class="header" style="margin-top: 5px;">List of xml</label>
 		<select id="xmlList" class="form-control select2-dropdown"></select>
-
-		<button class="btn-text-default" id="reloadContentOfXml">Reload</button>
-		<button class="btn-text-default" id="updateContentOfXml">Save</button>
-		<button class="btn-text-default" id="createContentOfXml">Add</button>
-		<button class="btn-text-default" id="deleteContentOfXml">Delete</button>
 
 		<label class="header" style="margin-top: 5px;">Content of xml</label>
 		<div id="main" class="div_main" style="height:50%; margin-top: 5px; margin-bottom: 5px;"></div>

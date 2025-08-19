@@ -38,6 +38,7 @@
 	let codeEditor	= null;
 	let xmlData		= [];
 	let lastSelectedXmlId = null;
+	let originalXmlText = '';
 
 	async function getXmls() {
 		Asc.scope.editorType = window.Asc.plugin.info.editorType;
@@ -228,15 +229,21 @@
 	async function loadXmlTextAndStructure()
 	{
 		let id = getCurrentXmlId();
-		if (!id || id === lastSelectedXmlId)
+		if (!id) {
+			originalXmlText = '';
+			updateSaveButtonState();
 			return;
+		}
 
 		lastSelectedXmlId = id;
 		let xmlText = await getTextOfXml(id);
 		let prettyXmlText = prettifyXml(xmlText);
-
+		
+		originalXmlText = prettyXmlText;
 		codeEditor.setValue(prettyXmlText);
+		updateSaveButtonState();
 		await createStrucOfXml(id);
+		updateContentControlButtonStates();
 	}
 
 	async function createStrucOfXml(id)
@@ -331,6 +338,7 @@
 				element.classList.remove('selected');
 			});
 			el.currentTarget.classList.add('selected');
+			updateContentControlButtonStates();
 		}
 
 		function isContainAttributes(node)
@@ -416,7 +424,7 @@
 		const xmlDoc = new DOMParser().parseFromString(sourceXml, 'application/xml');
 		const parsererror = xmlDoc.getElementsByTagName('parsererror');
 		if (parsererror.length > 0) {
-			throw new Error('XML parsing error: ' + parsererror[0].textContent);
+			console.log('XML parsing error: ' + parsererror[0].textContent);
 		}
 	
 		// Minimal XSLT for formating
@@ -466,9 +474,33 @@
 			return li[0].xPath;
 	}
 
+	function hasXmlChanged() {
+		if (!codeEditor) return false;
+		return codeEditor.getValue().trim() !== originalXmlText.trim();
+	}
+
+	function updateSaveButtonState() {
+		const saveButton = document.getElementById('updateContentOfXml');
+		if (saveButton) {
+			saveButton.disabled = !hasXmlChanged();
+		}
+	}
+
+	function updateContentControlButtonStates() {
+		const hasSelection = !!getSelectedItemXPath();
+		const bindButton = document.getElementById('match_with_selected_сс');
+		const insertButton = document.getElementById('insert_cc');
+		
+		if (bindButton) {
+			bindButton.disabled = !hasSelection;
+		}
+		if (insertButton) {
+			insertButton.disabled = !hasSelection;
+		}
+	}
+
 	async function updateAllContentControlsFromBinding()
 	{
-		Asc.scope.controls		= await Editor.callMethod('GetAllContentControls');
 		Asc.scope.editorType	= window.Asc.plugin.info.editorType;
 		await Editor.callCommand(() => {
 			let doc;
@@ -484,17 +516,27 @@
 					break;
 			}
 
-			if (!Asc.scope.controls)
-				Asc.scope.controls = [];
+			let controls = doc.GetAllContentControls();
 
-			for (let i = 0; i < Asc.scope.controls.length; i++)
+			for (let i = 0; i < controls.length; i++)
 			{
-				let ccId = Asc.scope.controls[i];
-				let cc = doc.GetContentControlById(ccId.InternalId);
+				let cc = controls[i];
 				if (cc)
 					cc.UpdateFromXmlMapping();
 			}
 		});
+	}
+
+	async function updateXml(){
+		let id = getCurrentXmlId()
+		if (!id)
+			return;
+
+		let text	= codeEditor.getValue();
+		await updateXmlText(id, text);
+		originalXmlText = text;
+		updateSaveButtonState();
+		await createStrucOfXml(id);
 	}
 
     window.Asc.plugin.init = async function()
@@ -516,28 +558,29 @@
 				autoCloseTags: {whenClosing: true},
 				extraKeys: {
 					"Ctrl-J": "toMatchingTag", 
-					"Ctrl-Q": function(cm){cm.foldCode(cm.getCursor())}
+					"Ctrl-Q": function(cm){cm.foldCode(cm.getCursor())},
+					"Ctrl-S": async function(){await updateXml()}
 				},
 				autoCloseBrackets: true,
 				foldGutter: true,
 				gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
 			});
+
+			codeEditor.on('change', function() {
+				updateSaveButtonState();
+			});
 		}
 
 		document.getElementById("xmlList").addEventListener("input", loadXmlTextAndStructure);
 
+		updateSaveButtonState();
+		updateContentControlButtonStates();
 		getXmls();
 		
 		document.getElementById("reloadContentOfXml").onclick = getXmls;
 
 		document.getElementById("updateContentOfXml").onclick = async function(e) {
-			let id = getCurrentXmlId()
-			if (!id)
-				return;
-
-			let text	= codeEditor.getValue();
-			await updateXmlText(id, text);
-			await createStrucOfXml(id);
+			await updateXml();
 		};
 
 		document.getElementById("createContentOfXml").onclick = createXml;
@@ -552,18 +595,16 @@
 		document.getElementById("match_with_selected_сс").onclick = async function(e) {
 			let xmlId	= document.getElementById('xmlList').value;
 
-			if (ccId !== null)
-			{
-				Asc.scope.xmlId	= xmlId;
-				Asc.scope.id	= ccId;
-				Asc.scope.xPath = getSelectedItemXPath();
+			Asc.scope.xmlId	= xmlId;
+			Asc.scope.xPath = getSelectedItemXPath();
 
-				await Editor.callCommand(() => {
-					let Doc			= Api.GetDocument();
-					let cc			= Doc.GetCurrentContentControl();
-					cc.SetDataBinding({prefixMapping: "", storeItemID: Asc.scope.xmlId, xpath: Asc.scope.xPath});
-				});
-			}
+			await Editor.callCommand(() => {
+				let Doc			= Api.GetDocument();
+				let cc			= Doc.GetCurrentContentControl();
+				if (!cc)
+					return;
+				cc.SetDataBinding({prefixMapping: "", storeItemID: Asc.scope.xmlId, xpath: Asc.scope.xPath});
+			});
 		}
 
 		document.getElementById("insert_cc").onclick = async function(e) {
@@ -580,13 +621,15 @@
 			Asc.scope.xmlId = id;
 			Asc.scope.xPath = getSelectedItemXPath();
 
+			if (!Asc.scope.xPath)
+				return;
+
 			if (value === 'block')
 			{
 				await Editor.callCommand(() => {
 					let doc = Api.GetDocument();
-					let sdt			= Api.CreateBlockLvlSdt();
+					let sdt	= Api.CreateBlockLvlSdt();
 					doc.InsertContent([sdt]);
-
 					sdt.SetDataBinding({prefixMapping: "", storeItemID: Asc.scope.xmlId, xpath: Asc.scope.xPath});
 				});
 			}
