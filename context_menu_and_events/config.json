@@ -1,0 +1,70 @@
+{
+	"name": "ContextMenu and Events",
+	"guid": "asc.{B617C899-03AA-476F-8D2C-1B7272489CBC}",
+
+	"variations": [
+		{
+			"description": "example context menu and events",
+			"url": "index.html",
+
+			"icons": ["resources/light/icon.png", "resources/light/icon@2x.png"],
+			"icons2": [
+				{
+					"style": "light",
+
+					"100%": {
+						"normal": "resources/light/icon.png"
+					},
+					"125%": {
+						"normal": "resources/light/icon@1.25x.png"
+					},
+					"150%": {
+						"normal": "resources/light/icon@1.5x.png"
+					},
+					"175%": {
+						"normal": "resources/light/icon@1.75x.png"
+					},
+					"200%": {
+						"normal": "resources/light/icon@2x.png"
+					}
+				},
+				{
+					"style": "dark",
+
+					"100%": {
+						"normal": "resources/dark/icon.png"
+					},
+					"125%": {
+						"normal": "resources/dark/icon@1.25x.png"
+					},
+					"150%": {
+						"normal": "resources/dark/icon@1.5x.png"
+					},
+					"175%": {
+						"normal": "resources/dark/icon@1.75x.png"
+					},
+					"200%": {
+						"normal": "resources/dark/icon@2x.png"
+					}
+				}
+			],
+			"isViewer": false,
+			"EditorsSupport": ["word"],
+
+			"isVisual": false,
+			"isModal": false,
+			"isInsideMode": false,
+			"isSystem": false,
+
+			"initDataType": "none",
+			"initData": "",
+
+			"buttons": [],
+
+			"events": [
+				"onContextMenuShow",
+				"onTargetPositionChanged"
+			]
+		}
+	]
+}
