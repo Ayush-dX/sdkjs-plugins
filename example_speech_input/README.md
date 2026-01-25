@@ -13,4 +13,4 @@ It is called "Speech input" in the interface and isn't installed by default in c
 3. Click the microphone button and start speaking. 
 4. After dictation is complete, the text is inserted into the document (for stopping press again the microphone button). 
 
-If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/plugin/basic
+If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/docs/plugin-and-macros/get-started/

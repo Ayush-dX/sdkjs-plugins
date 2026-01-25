@@ -10,4 +10,4 @@ It is called "num2word" in the interface and isn't installed by default in cloud
 2. Open the Plugins tab and press "num2word".
 3. The number converted to a string in Russian will be inserted in the cell below.
 
-If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/plugin/basic
+If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/docs/plugin-and-macros/get-started/

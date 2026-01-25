@@ -13,4 +13,4 @@ It is called "Example search and change background text" in the interface and is
 5. Press the "Color all" button to change the background for all found text.
 6. Press the "Reset" button to reset background color for selected text.
 
-If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/plugin/basic
+If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/docs/plugin-and-macros/get-started/

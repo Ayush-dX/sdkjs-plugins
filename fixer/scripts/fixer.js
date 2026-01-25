@@ -93,7 +93,7 @@
 				} catch (e) {
 				}
 			}
-			//if you need more information check this page https://api.onlyoffice.com/plugin/executecommand
+			//if you need more information check this page https://api.onlyoffice.com/docs/plugin-and-macros/interacting-with-editors/overview/how-to-call-commands/#callcommand
 			t.executeCommand('close', command);
 		});
 	};

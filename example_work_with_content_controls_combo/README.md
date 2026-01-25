@@ -10,4 +10,4 @@ It is called "example_work_with_content_controls_combo" in the interface and isn
 2. Click on content control. If plugin find necessary tag, then you will see input helper window with some options.
 2. Select an option and press the "Enter" button or click to paste option value in content control.
 
-If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/plugin/basic
+If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/docs/plugin-and-macros/get-started/

@@ -21,7 +21,7 @@
 	{
 		document.getElementById('btn_paste').onclick = function() {
 			// if you want to change some parametrs read more about it. 
-			// https://api.onlyoffice.com/plugin/executemethod/addcontentcontrol
+			// https://api.onlyoffice.com/docs/plugin-and-macros/interacting-with-editors/text-document-api/Methods/AddContentControl/
 			window.Asc.plugin.executeMethod("AddContentControl", [1, {"Id" : 7, "Tag" : "{tag_example}", "Lock" : 3}]);
 		};
 	};

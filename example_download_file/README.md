@@ -10,4 +10,4 @@ It is called "Download file" in the interface and isn't installed by default in 
 2. Select format for download file.
 3. Press "Download" file.
 
-If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/plugin/basic
+If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/docs/plugin-and-macros/get-started/

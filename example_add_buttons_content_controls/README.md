@@ -6,4 +6,4 @@ It is called "Add buttons to content controls" in the interface and isn't instal
 
 ## How to use
 
-If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/plugin/basic
+If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/docs/plugin-and-macros/get-started/

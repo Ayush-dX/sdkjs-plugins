@@ -11,4 +11,4 @@ For example:
 1. Add folder chess
 2. Wrap folder to extension
 
-If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/plugin/basic
+If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/docs/plugin-and-macros/get-started/

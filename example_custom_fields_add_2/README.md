@@ -11,4 +11,4 @@ It is called "Example add custom fields 2" in the interface and isn't installed 
 3. If you nee you can copy necessary field in the corresponding tab.
 4. You can insert option into document in "Insert Option" tab (choose an option and press the "Insert" button).
 
-If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/plugin/basic
+If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/docs/plugin-and-macros/get-started/

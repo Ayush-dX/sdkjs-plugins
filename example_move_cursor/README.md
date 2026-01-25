@@ -10,4 +10,4 @@ It is called "Example move cursor" in the interface and isn't installed by defau
 2. Press the "Start" button to move cursor to start a document.
 3. Press the "Stop" button to move cursor to end a document.
 
-If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/plugin/basic
+If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/docs/plugin-and-macros/get-started/

@@ -13,4 +13,4 @@ It is called "Example work with content controls" in the interface and isn't ins
 5. Press the "Change Field State" button for change field state (is content control or not).
 6. Press the "Get Current Field ID" and check console in your browser.
 
-If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/plugin/basic
+If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/docs/plugin-and-macros/get-started/

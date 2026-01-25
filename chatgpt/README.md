@@ -14,4 +14,4 @@ It is called "ChatGPT" in the interface and isn't installed by default in cloud,
 4. Select any text into a document and press right mouse button.
 5. Choose some of several options: "Text analysis", "Word analysis", "Translate" or "Generate image from text".
 
-If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/plugin/basic
+If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/docs/plugin-and-macros/get-started/

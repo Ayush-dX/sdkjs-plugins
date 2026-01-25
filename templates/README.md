@@ -9,4 +9,4 @@ It is called "Document Templates" in the interface and isn't installed by defaul
 1. Find the plugin in the Plugins tab.
 2. Сhoose any style you want to set.
 
-If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/plugin/basic
+If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/docs/plugin-and-macros/get-started/

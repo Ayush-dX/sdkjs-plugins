@@ -11,4 +11,4 @@ It is called Example load custom fields in the interface and isn't installed by 
 3. For answering on question with drop down variants select one variant and press the button "Next" or "Back" to go back to the previous question.
 4. When the questions are finished, the plugin will automatically close. And your answers will appear in the document.
 
-If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/plugin/basic
+If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/docs/plugin-and-macros/get-started/

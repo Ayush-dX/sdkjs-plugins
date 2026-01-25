@@ -10,4 +10,4 @@ It is called "Example work with content controls tags" in the interface and isn'
 2. In the field below you can see all content controls tags (press the "Refresh list" button).
 3. Press the "Past "Test paste for document"" for paste text into selected content control.
 
-If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/plugin/basic
+If you need more information about how to use or write your own plugin, please see this https://api.onlyoffice.com/docs/plugin-and-macros/get-started/

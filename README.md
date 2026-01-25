@@ -39,7 +39,7 @@ In this folder, you will find the simplest plugins to be used as an examples whi
 
 ## Documentation
 
-ONLYOFFICE API - https://api.onlyoffice.com/plugin/basic
+ONLYOFFICE API - https://api.onlyoffice.com/docs/plugin-and-macros/get-started/
 
 ## User feedback and support
 
