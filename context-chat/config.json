@@ -1,0 +1,21 @@
+{
+    "name": "Context Chat Assistant",
+    "guid": "asc.{B8D8C300-1234-5678-9ABC-DEF123456789}",
+    "baseUrl": "",
+    "variations": [
+        {
+            "description": "Chat with tagging and replacement",
+            "url": "index.html",
+            "icons": [ "resources/icon.png", "resources/icon@2x.png" ],
+            "isViewer": false,
+            "EditorsSupport": [ "word" ],
+            "isVisual": true,
+            "isModal": false,
+            "isInsideMode": true,
+            "initDataType": "none",
+            "initData": "",
+            "type": "panel", 
+            "size": [ 400, 100 ]
+        }
+    ]
+}

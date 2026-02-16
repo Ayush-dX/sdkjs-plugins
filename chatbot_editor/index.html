@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RFP2GRANTS AI</title>
+    <script type="text/javascript" src="https://onlyoffice.github.io/sdkjs-plugins/v1/plugins.js"></script>
+    <script type="text/javascript" src="https://onlyoffice.github.io/sdkjs-plugins/v1/plugins-ui.js"></script>
+    <link rel="stylesheet" href="https://onlyoffice.github.io/sdkjs-plugins/v1/plugins.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="plugin-container">
+        <!-- Mode Tabs -->
+        <div class="mode-tabs">
+            <button class="mode-tab active" id="chatTab" data-mode="chat">💬 Chatbot</button>
+            <button class="mode-tab" id="imageTab" data-mode="image">🖼️ Image Generator</button>
+        </div>
+
+        <!-- Chat Messages Container -->
+        <div class="chat-container" id="chatContainer">
+        </div>
+
+        <!-- Context Display -->
+        <div class="context-container" id="contextContainer" style="display: none;">
+            <div class="context-header">
+                <span>📎 Context attached</span>
+                <button class="clear-context" id="clearContext">✕</button>
+            </div>
+            <div class="context-content" id="contextContent"></div>
+        </div>
+
+        <!-- Header Suggestions -->
+        <div class="header-suggestions" id="headerSuggestions" style="display: none;"></div>
+
+        <!-- Input Area -->
+        <div class="input-container">
+            <textarea 
+                id="messageInput" 
+                placeholder="Type your question or use @ to reference headers..."
+                rows="3"
+            ></textarea>
+            <div class="input-actions">
+                <button class="attach-btn" id="attachBtn" title="Attach selected text">📎</button>
+                <button class="send-btn" id="sendBtn">Send</button>
+            </div>
+        </div>
+
+        <!-- Chat Count -->
+        <div class="chat-count" id="chatCount">Messages: 0/5</div>
+    </div>
+
+    <script src="pluginCode.js?v=4.3"></script>
+</body>
+</html>

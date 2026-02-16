@@ -1,0 +1,100 @@
+{
+    "name": "RFP2GRANTS AI",
+    "nameLocale": {
+        "en": "RFP2GRANTS AI"
+    },
+    "guid": "asc.{7A2F9E4D-3C8B-4F1A-8D6E-5B9C2A1D3E4F}",
+    "variations": [
+        {
+            "description": "AI assistant for document editing with chatbot and image generation",
+            "descriptionLocale": {
+                "en": "AI assistant for document editing with chatbot and image generation"
+            },
+            "url": "index.html",
+            "icons": [
+                "resources/light/icon.png",
+                "resources/light/icon@2x.png"
+            ],
+            "icons2": [
+                {
+                    "style": "light",
+                    "100%": {
+                        "normal": "resources/light/icon.png"
+                    },
+                    "125%": {
+                        "normal": "resources/light/icon@1.25x.png"
+                    },
+                    "150%": {
+                        "normal": "resources/light/icon@1.5x.png"
+                    },
+                    "175%": {
+                        "normal": "resources/light/icon@1.75x.png"
+                    },
+                    "200%": {
+                        "normal": "resources/light/icon@2x.png"
+                    }
+                },
+                {
+                    "style": "dark",
+                    "100%": {
+                        "normal": "resources/dark/icon.png"
+                    },
+                    "125%": {
+                        "normal": "resources/dark/icon@1.25x.png"
+                    },
+                    "150%": {
+                        "normal": "resources/dark/icon@1.5x.png"
+                    },
+                    "175%": {
+                        "normal": "resources/dark/icon@1.75x.png"
+                    },
+                    "200%": {
+                        "normal": "resources/dark/icon@2x.png"
+                    }
+                }
+            ],
+            "isViewer": false,
+            "EditorsSupport": [
+                "word"
+            ],
+            "isVisual": true,
+            "isModal": false,
+            "isInsideMode": true,
+            "initOnStart": true,
+            "initDataType": "text",
+            "initData": "",
+            "isUpdateOleOnResize": true,
+            "buttons": [
+                {
+                    "text": "Open",
+                    "primary": true
+                }
+            ],
+            "size": [
+                350,
+                0
+            ],
+            "initOnSelectionChanged": true,
+            "store": {
+                "background": {
+                    "light": "#ffffff",
+                    "dark": "#2e2e2e"
+                },
+                "screenshots": [],
+                "icons": [],
+                "categories": ["work", "specAbilities"]
+            },
+            "events": [
+                "onContextMenuShow"
+            ],
+            "contextMenu": [
+                {
+                    "id": "attachToRFPChatbot",
+                    "text": "Attach to RFP2GRANTS AI",
+                    "icons": "resources/light/icon.png",
+                    "items": []
+                }
+            ]
+        }
+    ]
+}

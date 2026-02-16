@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Context Chat</title>
+    <script type="text/javascript" src="https://onlyoffice.github.io/sdkjs-plugins/v1/plugins.js"></script>
+    <script type="text/javascript" src="https://onlyoffice.github.io/sdkjs-plugins/v1/plugins-ui.js"></script>
+    
+    <script type="text/javascript" src="scripts/pluginCode.js"></script>
+    
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://onlyoffice.github.io/sdkjs-plugins/v1/plugins.css">
+</head>
+<body>
+
+    <div id="context-bar">
+        <div style="font-size: 10px; color: #888; margin-bottom: 5px;">ACTIVE CONTEXTS (MAX 2):</div>
+        <div id="chips-container"></div>
+    </div>
+
+    <div id="chat-window">
+        <div class="message bot">Hello! Select text or type "@Header" to add context.</div>
+    </div>
+
+    <div id="input-area">
+        <button id="btn-selection" onclick="captureSelection()">+ Add Selected Text</button>
+        <textarea id="msgInput" placeholder="Type here... (Use @Header for auto-tagging)"></textarea>
+        <div class="controls">
+            <button id="btnSend" class="primary" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // --- STATE ---
+        let activeContexts = []; 
+        let isSelectionReady = false;
+
+        // --- EVENT LISTENER FOR MESSAGES FROM PLUGINCODE.JS ---
+        window.addEventListener("message", function(event) {
+            const data = event.data;
+            
+            // 1. Selection Status
+            if (data.type === "SELECTION_STATUS") {
+                isSelectionReady = data.hasSelection;
+                const btn = document.getElementById('btn-selection');
+                if (isSelectionReady) btn.classList.add("active");
+                else btn.classList.remove("active");
+            }
+
+            // 2. Header Found
+            if (data.type === "HEADER_CAPTURED") {
+                if (data.payload.found) {
+                    addContext({
+                        id: Date.now(),
+                        type: 'header',
+                        text: data.payload.text,
+                        start: data.payload.start,
+                        end: data.payload.end,
+                        label: "@" + data.payload.headerTitle.substring(0, 15)
+                    });
+                } else {
+                    addMessage("bot", "Could not find a header with that name.");
+                }
+            }
+
+            // 3. Selection Captured
+            if (data.type === "SELECTION_CAPTURED") {
+                addContext({
+                    id: Date.now(),
+                    type: 'selection',
+                    text: data.payload.text,
+                    start: data.payload.start,
+                    end: data.payload.end,
+                    label: "Selection (" + data.payload.text.substring(0, 10) + "...)"
+                });
+            }
+        });
+
+        // --- CONTEXT MANAGEMENT (MAX 2) ---
+        function addContext(ctx) {
+            if (activeContexts.some(c => c.start === ctx.start)) return;
+
+            // FIFO: If > 2, remove oldest
+            if (activeContexts.length >= 2) {
+                const removed = activeContexts.shift();
+                window.Asc.plugin.clearHighlight(removed.start, removed.end);
+            }
+
+            activeContexts.push(ctx);
+            renderChips();
+        }
+
+        function removeContext(id) {
+            const ctx = activeContexts.find(c => c.id === id);
+            if (ctx) {
+                window.Asc.plugin.clearHighlight(ctx.start, ctx.end);
+                activeContexts = activeContexts.filter(c => c.id !== id);
+                renderChips();
+            }
+        }
+
+        // --- CHAT & BACKEND LOGIC ---
+        async function sendMessage() {
+            const input = document.getElementById("msgInput");
+            const text = input.value.trim();
+            if (!text) return;
+
+            // Check for @Tags
+            const tagMatch = text.match(/@([\w\s]+)/);
+            if (tagMatch) {
+                window.Asc.plugin.findAndHighlightHeader(tagMatch[1]);
+                input.value = ""; 
+                return;
+            }
+
+            addMessage("user", text);
+            input.value = "";
+
+            // Prepare Payload
+            const payload = {
+                user_query: text,
+                contexts: activeContexts.map(c => ({ id: c.id, text: c.text, type: c.type }))
+            };
+
+            addMessage("bot", "Thinking...");
+
+            try {
+                // --- MOCK BACKEND (Replace with real fetch) ---
+                const data = await new Promise(resolve => {
+                    setTimeout(() => {
+                        const isReplace = payload.user_query.toLowerCase().includes("change");
+                        if (isReplace && payload.contexts.length > 0) {
+                            resolve({
+                                answer: "Updating context...",
+                                action: "replace",
+                                target_context_id: payload.contexts[0].id,
+                                replacement_text: "NEW GENERATED TEXT FROM BACKEND."
+                            });
+                        } else {
+                            resolve({ answer: "I received " + payload.contexts.length + " contexts.", action: "chat" });
+                        }
+                    }, 800);
+                });
+                // ----------------------------------------------
+
+                document.querySelector(".message.bot:last-child").remove();
+                addMessage("bot", data.answer);
+
+                if (data.action === "replace") {
+                    const target = activeContexts.find(c => c.id === data.target_context_id);
+                    if (target) {
+                        window.Asc.plugin.replaceContextText(target.start, target.end, data.replacement_text);
+                        removeContext(target.id);
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // --- UTILS ---
+        function captureSelection() { window.Asc.plugin.highlightSelection(); }
+        
+        function renderChips() {
+            const container = document.getElementById("chips-container");
+            container.innerHTML = "";
+            activeContexts.forEach(ctx => {
+                const div = document.createElement("div");
+                div.className = "chip " + ctx.type;
+                div.innerHTML = `${ctx.label} <span class="close" onclick="removeContext(${ctx.id})">×</span>`;
+                container.appendChild(div);
+            });
+        }
+
+        function addMessage(role, text) {
+            const container = document.getElementById("chat-window");
+            const div = document.createElement("div");
+            div.className = "message " + role;
+            div.innerText = text;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+    </script>
+</body>
+</html>

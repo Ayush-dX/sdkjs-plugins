@@ -1,0 +1,88 @@
+# RFP Chatbot Editor Plugin - Installation Instructions
+
+## Installation Steps
+
+### For ONLYOFFICE Server (Your Setup)
+
+1. **Copy the plugin folder**:
+   ```bash
+   # Copy the entire chatbot_editor folder to the ONLYOFFICE plugins directory
+   # Example path: /var/www/onlyoffice/documentserver/sdkjs-plugins/
+
+   cp -r chatbot_editor /var/www/onlyoffice/documentserver/sdkjs-plugins/
+   ```
+
+2. **Set proper permissions**:
+   ```bash
+   chmod -R 755 /var/www/onlyoffice/documentserver/sdkjs-plugins/chatbot_editor
+   ```
+
+3. **Restart ONLYOFFICE Document Server**:
+   ```bash
+   sudo supervisorctl restart ds:docservice
+   # OR
+   sudo systemctl restart ds-docservice
+   ```
+
+4. **Clear browser cache** and reload the document editor
+
+5. The plugin should appear in the Plugins menu as "RFP Chatbot Editor modified"
+
+### For ONLYOFFICE Desktop
+
+1. Copy the entire `chatbot_editor` folder to:
+   - **Windows**: `%ProgramFiles%\ONLYOFFICE\DesktopEditors\editors\sdkjs-plugins\`
+   - **macOS**: `/Applications/ONLYOFFICE.app/Contents/Resources/editors/sdkjs-plugins/`
+   - **Linux**: `/opt/onlyoffice/desktopeditors/editors/sdkjs-plugins/`
+
+2. **Restart ONLYOFFICE Desktop application**
+
+3. Access from Plugins menu in Document Editor
+
+## Configuration
+
+### API Endpoint
+Current API: `http://24.227.108.165:8000/editor-chatbot`
+
+To change, edit line 2 in `pluginCode.js`:
+```javascript
+const API_URL = 'http://your-server:8000/editor-chatbot';
+```
+
+### Message Limit
+Default: 5 messages per session
+
+To change, edit line 3 in `pluginCode.js`:
+```javascript
+const MAX_MESSAGES = 10; // Your desired limit
+```
+
+## Features
+
+✅ **Docked Side Panel**: Opens as a side panel (not overlay)
+✅ **Full Height**: Matches document editor height
+✅ **Header Detection**: Detects all H1-H6, Titles, Subtitles
+✅ **@ Mentions**: Type @ to see and select headers
+✅ **Text Highlighting**: Selected context is highlighted in yellow
+✅ **Smart Sections**: Captures entire section content including subheadings
+✅ **Auto-dismiss**: Error messages disappear after 20 seconds
+✅ **Context Attachment**: Attach up to 2 contexts (selected text or headers)
+
+## Troubleshooting
+
+**Plugin not showing?**
+1. Check if plugin folder is in correct location
+2. Verify config.json is valid JSON (use jsonlint.com)
+3. Clear browser cache (Ctrl+Shift+Delete)
+4. Restart ONLYOFFICE server/application
+5. Check browser console for errors (F12)
+
+**API not connecting?**
+1. Verify API server is running: `curl http://24.227.108.165:8000/editor-chatbot`
+2. Check CORS settings on API server
+3. Check firewall allows connection from ONLYOFFICE server
+
+**Headers not appearing?**
+1. Make sure document has proper heading styles applied
+2. Check browser console for "Extracted headers: X" log message
+3. Re-open the plugin to refresh header list
